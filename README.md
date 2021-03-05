@@ -4,7 +4,7 @@ Python3.x modules for creating databases with contexts, nodes, and relations bet
 See documentation.txt for information on wikiweb and how to use it.
 
 To discuss this project, you may do so at `http://wikiweb.growspice.com`.
-(Yes, you have to register, and then become a member by posting in the Support forum that you agree to the rules before posting.)
+(Yes, you first have to register, and then become a member by posting in the Support forum that you agree to the rules.)
 
 Dependencies:
 * natsort (sudo pip3 install natsort)
