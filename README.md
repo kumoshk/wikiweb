@@ -4,7 +4,7 @@ A wikiweb is used to make database projects with nodes related through contexts 
 See documentation.txt for information on wikiweb and how to use it.
 
 To discuss this project, you may do so at `http://wikiweb.growspice.com`.
-(Yes, you first have to register, and then become a member by posting in the Support forum that you agree to the rules.)
+(Yes, you first have to register, and then become a member by posting in the Support forum that you agree to the rules. You can expect to wait at least a few minutes to 48 hours before I approve your membership.)
 
 Dependencies:
 * Python 3.x
