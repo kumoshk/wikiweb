@@ -1,0 +1,579 @@
+`wikiweb.py` provides a way to organize information—or to relate information (in both directions) in an innumerable amount of ways.
+
+There are a few main principles and terms to consider:
+
+• Node: Something that holds information. This is akin to a node in a network or an article in a wiki. Nodes may contain media. Each node has a unique name and a unique ID. Nouns make great nodes.
+    ‣ Primary node: This is the node you are viewing (or whose perspective you take).
+    ‣ Secondary node: This is a node that is related to the primary node (via a context).
+• Context: This defines a way that two nodes can be related from the perspective of the primary node of the two. All contexts have a crossed context. Each context has a unique name and a unique ID. Verbs and actions make great contexts.
+    ‣ Crossed context: If you follow a secondary node, the crossed context is the context by which you may return. All contexts are crossed (including crossed contexts).
+    ‣ Context pair: This refers to a context and its accompanying crossed context.
+• Relation: This defines how one primary node is related to one or more secondary nodes. Other terms, such as relate, may refer to relations as expected. Relations do not have names or IDs.
+    ‣ Crossed relation: This defines how one or more secondary nodes are related to one primary node.
+    ‣ Relation pair: This refers to a relation and its accompanying crossed relation.
+• Pin (noun): AKA primary pin. This refers to a primary node and an accompanying context by which it relates or may relate to one or more secondary nodes (although the secondary nodes need not be mentioned). A pin usually only has two elements, but in the program itself (as opposed to using the lingo), if it has three, the third is the secondary node (the thing being pinned).
+• Secondary pin: This refers to a secondary node and an accompanying context by which it relates or may relate to one or more primary nodes. This only has two elements.
+• Pin (verb): This refers to the action of relating the primary node of a pin with its context to the secondary node(s).
+• Project: This defines a group of nodes, contexts and relations. A project may have a name and be represented by a file.
+• Node ID: This is the ID of the node all throughout the project. It doesn’t change.
+• Relative node ID: This is the ID of a secondary node in a specific relation. If you would like a constant number assigned to every single tomato—everything pinned with (tomato, includes)—for instance, this automatically gives you that. Relation IDs do not change—not even if the relation is removed (unless the entire relation object is deleted; in that case, if it’s recreated, the relative node IDs will start fresh). If you’re wondering why you might like a constant number attached to every tomato, this is so you can disambiguate between ambiguous tomatoes and multiple names for the same tomato.
+• Node name: This is a [hopefully] memorable name that you can attach to a node. It’s not necessarily the title of the node that is displayed, as each node name must be entirely unique. Nodes can be renamed, however. Node names may include spaces and most (if not all) other characters.
+• Context name: This is a [hopefully] memorable name that you can attach to a context. It’s not necessarily the title of the context that is displayed, as each context name must be entirely unique. Contexts can be renamed, however. Context names may include spaces and most (if not all) other characters.
+• Disconnect: This is a verb. It means to remove a node from all relations (and all relations from that node).
+• Pin ancestors: These are the ancestral nodes of a particular pin. (If you pin tomato with (Solanaceae, includes) and you pin Solanaceae with (Plant, includes) then tomato will be pinned with (Plant, includes), too, regardless of the order you pin things. You can make relations so that they aren’t counted as ancestors (so it won’t go back any further, let alone to the item).
+• Pin descendants: These are the descendant nodes of a particular pin (see pin ancestors). You can make relations so that they aren’t counted as descendants (so it won’t go down any further, let alone to the item).
+• Node alias: This is just another name for a specific node (in case you want more than one). This is useful if you’re creating a tagging system, and want multiple names for the same tag (so they’ll all contain the same articles).
+
+Examples of the above terms in practice (this is pseudo code):
+
+Nodes:
+    apple
+    cheese
+    dairy product
+    food
+    fruit
+    lettuce
+    potato
+    vegetable
+    Idaho
+    Utah
+    Oregon
+    Montana
+    the sky
+    the Earth's crust
+    state
+
+Context pairs:
+    includes; is a
+    north; south
+        Such as north is shorthand for the northern direction of the primary node includes the secondary nodes (making it just say north is useful for such as text adventures or point and click games where north shows you what is north of the current room).
+    east; west
+    up; down
+    northeast; southwest
+    northwest; southeast
+    has lots of; abundant in
+
+Relations (created manually):
+    apple is a fruit
+    fruit is a food
+    lettuce is a vegetable
+    potato is vegetable
+    cheese is a dairy product
+    dairy product is a food
+    Idaho south Utah
+        I mean this to mean south of Idaho is Utah. Or, if you go south from Idaho, you reach Utah. So, if you’re in the Idaho article, and you see the south context, it’ll show you everything south of Idaho.
+    Idaho east Montana
+    Idaho west Oregon
+    the sky down Idaho, Utah, Montana, Oregon
+    the earth's crust up Idaho, Utah, Montana, Oregon
+    state includes Idaho, Utah, Montana, Oregon
+    Idaho has lots of potato
+
+Crossed relations (created automatically):
+    fruit includes apple
+    dairy product includes cheese
+    vegetable includes lettuce and potato
+    food includes fruit, dairy product, and vegetable
+    Utah north Idaho
+    Montana west Idaho
+    Oregon east Idaho
+    Idaho up the sky
+    Utah up the sky
+    Montana up the sky
+    Oregon up the sky
+    Idaho down the earth's crust
+    Utah down the earth's crust
+    Montana down the earth's crust
+    Oregon down the earth's crust
+    Idaho is a state
+    Utah is a state
+    Montana is a state
+    Oregon is a state
+    potato abundant in Idaho
+
+Therefore, you can go to the apple page/article/node and look at its 'is a' context to see that it is a fruit. You can go to fruit’s is a context to see that it’s a food. When inheritance is programmed in, then you’ll be able to see that apple is a food without looking at fruit.
+
+You can go to Oregon and see that up is the sky, that down is the earth's crust, that east is Idaho and that Oregon is a state. You can go to the sky and see that down is Idaho, Montana, Oregon and Utah.
+
+It should be noted that you can make up whatever context pairs you want.
+
+Let’s pretend to look at the potato article:
+
+potato
+    desc
+        Potatoes are a popular Solanaceae vegetable with lots of starch.    
+    relations
+        is a
+            vegetable
+        abundant in
+            Idaho
+
+Now, assuming we’re looking at a webpage, let’s click on Idaho (mentioned in potato above). Here’s what Idaho shows (although we would alphabetize the contexts under relations):
+
+Idaho
+    desc
+        A northwestern state of the United States of America, in North America, just south of Canada.
+    relations
+        is a
+            state
+        south
+            Utah
+        east
+            Montana
+        west
+            Oregon
+        up
+            the sky
+        down
+            the earth's crust
+        has lots of
+            potato
+
+This allows us to provide a lot of information about anything in particular without actually writing up a big, fancy article (although you could still do that in the description, or some other attribute of a node). You can go to a node and see lots of pertinent information just right there in front of your eyes. Or, you can query the project for the information you desire.
+
+
+You may export your project to a web page.
+
+
+How to format mstring in Project.data_entry()—mstring is the data you enter in the fashion that you enter it:
+
+[Note: If you enter formatted quotes in mstring, they can be converted to unformatted quotes for the sake of consistency. The reverse is only partially true; if you make the program require formatted quotes, it only converts what it can, and leaves the rest up to you (so, be sure to format all your left quotes and double quotes manually). Also note that em dashes and en dashes may be automatically formatted, if desired.]
+
+You must give instructions in the following fashion:
+
+type of thing to do
+[extra line break]
+thing 1
+thing 2
+thing 3
+…
+[extra line break]
+next type of thing to do
+[extra line break]
+thing 1
+thing 2
+thing 3
+…
+[…]
+The default behavior of this method is to allow the typist to create relations (and create any of the nodes mentioned thereby, if they don’t already exist).
+
+Full syntax:
+
+primary_node_name1|context1|crossed_context1||primary_node_name2|context2|crossed_context2||…|||line_context1a|crossed_line_context1b||line_context1a|crossed_line_context1b||…
+
+secondary1|alias1|alias2…
+secondary2|alias1|…
+seondary3
+…
+
+So in this example:
+
+Brad Gates|bred|||breed of
+
+Brad's Atomic Grape tomato
+Napa Giant tomato
+
+That will make it so that Brad Gates bred the listed tomatoes, and that the listed tomatoes are breeds of tomatoes, and create the tomato node if necessary.
+
+&&&& UPDATE TO THE NEW SYNTAX (MENTIONED DIRECTLY ABOVE) IN THE DOCUMENTATION BELOW. The old syntax was as follows:
+primary_node_name1|primary_node_name2|…||context1a|crossed_context1b||context2a|crossed_context2b||…|||line_context1a|crossed_line_context1b||line_context1a|crossed_line_context1b||…
+
+Notes:
+• You only specify the crossed context if you have not created the context pair (it will create it if you specify both). You must specify both if the context pair doesn’t yet exist.
+• If you omit contexts, the default context will be used. All that is required for you to enter is one primary node name (and nothing else on that line).
+• A relation will be made between each primary node specified and each of the secondary nodes, using a context pair specified to create each relation (and it’ll do them all with each of the context pairs likewise).
+• Line contexts use the last lowercase words in the secondary node name to create a new node with that name (if it doesn’t exist), and make a relation with the node and the new one (using the line contexts to create a relation per line context). This functionality is primarily offered to make data entry for gardening databases easy (because the breed name is capitalized while the kind of plant it is is usually lowercase: e.g. Cherokee Purple tomato; this will automate making a relation between Cherokee Purple tomato and tomato).
+• Nodes that you specify that don’t exist will be created (and if they’re already created, it won’t produce an error).
+• Aliases are just alternate names for the node (you can use the alias names in place of the node in your data entry; they point to the same node object).
+• If you create a secondary node that doesn’t already exist, and try to give it an alias that already exists as a node in the database, it will make the secondary node an alias to that instead. This only happens if the secondary node was not in the database already, since we don’t want to delete pre-existing nodes without notice (so, it doesn’t create it, but it makes an alias with its name instead).
+
+Examples:
+
+*tomato||includes|is a
+
+Camp Joy|Chadwick's Cherry
+Early Girl F1
+Roma
+Husky Cherry Red F1
+North Dakota Earliana
+
+*pepper||includes
+
+Feher Ozon
+Lipstick
+King of the North
+Chervena Chushka
+Orange California Wonder
+
+celebrity||includes
+
+Oprah Winfrey
+Tom Hanks
+
+This means, pin each member of the list of tomatoes with (tomato, includes) and pin each member of the list of peppers with (pepper, includes). We mention 'is a' with tomato, but not with pepper because we are creating the context the first time. Asterisks indicate that the name of the node should be appended to the names of the nodes that follow. So, instead of the node being named 'Cherokee Purple', it will be named 'Cherokee Purple tomato'. You’ll note that I did not make it create 'Oprah Winfrey' as 'Oprah Winfrey celebrity'. The '|' character is a delimiter. When creating relations, for secondary nodes, what follows is an alias name for that node (you can use as many delimeters as you want for as many aliases as you want).
+
+Triple delimeter example:
+
+Person||grew in 2017|||breed of
+
+Cherokee Purple tomato
+Big Bertha F1 pepper
+
+The above means to make the following relations: Person grew in 2017 Cherokee Purple tomato AND Cherokee Purple tomato breed of tomato, as well as Person grew in 2017 Big Bertha F1 pepper AND Big Bertha F1 pepper breed of pepper. It takes the last consecutive lowercase words of the line to form the secondary node, if a double delimeter is there, followed by a context. It does create the relations tomato and pepper if they don’t exist. It doesn’t create the context, currently.
+
+*tomato||breeds|breed of|||is a
+
+Cherokee Purple
+Early Girl F1
+
+This is like the previous example, except it the secondary node is tomato (rather than included in the line). So, Cherokee Purple tomato breed of tomato, Cherokee Purple tomato is a tomato, etc.
+
+Double delimeter example:
+
+node1||context1a|context1b||context2a|context2b||context3a|||line_context1a|line_context1b||line_context2a|line_context2b||line_context3a
+
+node2
+
+A double delimeter delimits context pairs (if you want to have more than one context pair). A triple delimeter divides line contexts for regular ones. We talked about what line contexts are above. If you specify both the context and its cross, it will create the context. If you just specify one side of the context pair, then it will assume that it already exists. You can do as many contexts or line contexts as you like. Let’s make a simpler example below:
+
+*tomato||includes||children
+
+Cherokee Purple
+
+This makes the following relations: tomato includes Cherokee Purple tomato, and tomato children Cherokee Purple tomato.
+
+Signals
+
+These go in front of 
+
+• #: Inherit character. When you’re making relations, use this to indicate that pins should inherit. You may use this in conjunction with the other two signals (in any order): e.g. #*tomato|includes
+    ‣ You may want to save the database before you do this, since it’s likely to make a lot of changes.
+• &: Command character. This shows that the line is a command to be performed on the lines that follow it. This is outlined below.
+• *: Concat character. (Explained above.) Asterisks indicate that the name of the node should be appended to the names of the nodes that follow. Do not use this at the same time as the command character.
+
+Commands
+
+You may do other things besides add relations (and create the nodes/contexts for the relations you’re adding). If you put an & where the * can go above, it will interpret that line to be a kind of command to be run on the group of lines that direct follows. [Note that all nodes, contexts, search criteria, etc. is case-sensitive.]
+
+Note that not all commands utilize the delimeter (e.g. most regular expression commands), but rather use Python key-value pairs, which are inserted into the corresponding methods.
+
+&relate context1_side1|context1_side2||context2_side1|context2_side2
+
+node1|node2
+node3|node4
+node5|node6
+
+What the above does is make two relations between node1 and node2, and the same relations between node3/node4 and node5/node6. You can abbreviate relate to rel or r. It will also create those two relations (although if you omit side2, it will assume that they are already created). It will also create the nodes if they don’t exist.
+
+&attribute
+
+node|key|value
+node|key|type|value
+Tom Hanks|birthday|date|9 Jul 1956
+Tom Hanks|emmys|int|7
+Tom Hanks|movies|auto|{"Forrest Gump", "Big", "etc."} #This is just a Python set; 'auto' automatically interprets the type; note that strings require quotes (when using auto). Note that you’d likely be better off actually creating nodes with the movie names and making a relationship between them and Tom Hanks (as opposed to adding these things as attributes; this is just for demonstration on how to add attributes). You can use comments here, but not with other types than 'auto'.
+
+The above allows you to add attributes to a node. Note that 'auto' does not allow you to enter Python datetime objects since one must import them to Python. You must explicitly use 'date' for that. Also, you must use 'fraction' for items to be converted to Python fractions.Fraction objects. If you desire precision with numbers that are not whole numbers, use fractions.Fraction instead of float.
+
+&relation link attribute
+
+primary|context|secondary|key|value
+primary|context|secondary|key|type|value
+
+This is for setting other attributes similar to "html_params" in the link attributes. This command functions like attribute does.
+
+&pin regex
+
+"pin":("tomato", "includes"), "text":r" tomato$", "exclude":r"^litchi", "include pins":[("node", "context"), ("node2", "context2")], "exclude pins":[("node3", "context3"), ("node4", "context4")], "case sensitive":True
+
+The above will pin regular expression matches with ('tomato', 'include'). You’ll notice that there are two regular expressions. The first is to match nodes; the second is for exluding them. If you include pins that means to pin only nodes from within those pins (otherwise, it’ll search for matched to pin from among all nodes). If you exclude pins, that means nodes in those pins will be excluded from the search. The keys, include_pins and exclude_pins should be either lists of tuples or sets of tuples (not tuples of tuples; and not lists or sets of lists or sets, and not tuples of lists or sets). Lists are surrounded by []. Sets are surrounded by {}. Tuples are surrounded by (). Alternatively, you can omit the surrounding list or set, and just enter a single pin (which is a tuple). Each line of this command is a set of Python key value pairs (so you can use Python escape sequences, declare Python types and such—although you’ll only need to use lists or such as lists, as well as strings, raw strings and tuples; you need not enter integers and such). Only pin and text are required to be entered (so `"pin":("tomato", "includes"), "text":r" tomato$"` by itself is perfectly viable). Please note that include pins and exclude pins require the brackets or such even if you only have one pin in them. You can put the key-value pairs in any order you want.
+
+&pin regex delim
+
+tomato|includes| tomato$|^litchi
+
+See ‘pin regex’ instead. ‘pin regex delim’ is a depreciated command (as the command above it has more functionality and isn’t limited by a delimeter without escape sequences), but it may be handy for some quick simple stuff that requires less typing. The above will pin regular expression matches with ('tomato', 'include'). You’ll note there are two regular expressions there ('|' is not part of either regular expression, since it’s our chosen delimiter). The first regular expression is the one to match; matches to the second one are excluded. You may omit the regular expression designed for exclusion.
+
+&regex rename node
+
+"search":r"\bRed\b", "replace":r"\bRED\b", "exclude":r"\bGiant\b", "in pins":[("tomato", "includes")], "ex pins":[("F1 hybrid", "includes")], "case sensitive":True
+
+This capitalizes the word ‘RED’ in all node names that don’t have the word ‘Giant’ in the name, within the (tomato, includes) pin, excluding the (F1 Hybrid, Includes) pin, and the regular expressions are case-sensitive. This command doesn’t use the delimeter, but rather allows you to enter Python key-value pairs (such as go in a Python dictionary). Note that search, replace, and exclude are all regular expressions. Putting r before a string makes it a raw string (and I recommend that you generally put that before regular expression strings in order to make such as \n more intuitive). The keys, include_pins and exclude_pins should be either lists of tuples or sets of tuples (not tuples of tuples; and not lists or sets of lists or sets, and not tuples of lists or sets). Lists are surrounded by []. Sets are surrounded by {}. Tuples are surrounded by (). Alternatively, you can omit the surrounding list or set, and just enter a single pin (which is a tuple).
+
+&regex rename context
+
+"search":r"^is a$", "replace":r"is tagged by", "exclude":None, "case sensitive":True
+
+This renames contexts that match a regular expression (this particular one just renames 'is a' to 'is tagged by'). Only "search" and "replace" are required keys.
+
+&pin startswith
+
+tomato|includes|Cherokee
+
+This will make tomato include all nodes with names that begin with Cherokee. So everything that starts with Cherokee will be a tomato after this.
+
+&pin endswith
+
+tomato|includes| tomato
+
+This will make every node with a name that ends with ' tomato' a tomato.
+
+&make node
+
+node name 1|node alias
+node name 2|node alias1|node alias2
+node name 3
+
+This makes nodes and optionally gives them one or more aliases.
+
+&make context
+
+context1|crossed context1
+context2|crossed context2
+context3|crossed context3|default
+
+The above lets you make context pairs. If you add the third argument, it makes it the default context pair.
+
+&rename nodes
+
+oldName|newName
+
+The above allows you to rename nodes.
+
+&rename contexts
+
+oldName|newName
+
+The above allows you to rename contexts. Note that this does not rename the crossed context in one line (you have to do that on another line if you want that changed, too).
+
+&disconnect
+
+nodeName1
+nodeName2
+
+This removes a node from all relationships.
+
+&delete nodes
+
+nodeName1
+nodeName2
+
+This deletes nodes.
+
+&delete contexts
+
+contextName1
+contextName2
+
+This deletes contexts. Note that it necessarily deletes the crossed contexts, too. This deletes all relationships that use either member of the context pair.
+
+&delete relation
+
+primaryNode1|context1|secondaryNode1|secondaryNode2|…
+
+This deletes relations.
+
+&delete relation|primaryNode[|context]
+
+secondaryNode1
+secondaryNode2
+
+This deletes relations (if you omit the optional context, it uses the default context instead).
+
+&disable ancestor inheritance
+&disable descendant inheritance
+&disable inheritance
+&enable ancestor inheritance
+&enable descendant inheritance
+&enable inheritance
+&set ancestor inheritance
+&set descendant inheritance
+&set inheritance
+
+The above commands allow you to set (which is to say, to enable or disable uniquely per each entry), enable, or disable ancestor or descendant inheritance. Lines of instruction take three parameters (for the ones that set—a node, a context, and a boolean) and two parameters (for those that just enable or just disable—a node and a context). The command line itself has no parameters. | separates arguments on each line of instructions; set inheritance, enable inheritance, and disable inheritance affect both ancestor inheritance and descendant inheritance. Note that these don’t actually remove any ancestor or descendant pins (if you want to do that, too, remove the appropriate relations at the appropriate times; it does affect what will be added or removed in future).
+
+&regex node matches
+
+"text":"\bGreen\b", "exclude_text":None, "sort_it":False, "include_pins":None, "exclude_pins":None, "cs":False
+
+This finds node name matches based on a regular expression. The only required key is "text". The example just searches for all nodes with the word ‘Green’ (with any casing) in their names. The default for cs is True for all methods, just for the record.
+
+&regex context matches
+
+"text":"\bGreen\b", "exclude_text":None, "sort_it":False, "cs":True
+
+This finds context name matches based on a regular expression. The only required key is "text". The example just searches for all nodes with the word ‘Green’ in their names.
+
+&disconnect regex
+
+"text", "exclude_text", "include_pins", "exclude_pins", "cs", "delete_relations"
+
+This method disconnects all nodes whose names match a certain regular expression. To disconnect means to remove current association with all relations; "text" is the only required key.
+
+&del node regex
+
+"text", "exclude_text", "include_pins", "exclude_pins", "cs", "delete_relations"
+
+This deletes all nodes that match the regular expression.
+
+&del context regex
+
+"text", "exclude_text", "sort_it", "cs"
+
+This deletes all contexts that match the regular expression.
+
+&html update parameters
+
+primary node name|context name|secondary node name|parameters
+
+This command is only of use if you plan to export your project to HTML (with JavaScript). This allows you to add HTML update parameters that are updated when you click on a secondary node (in an HTML-exported version of the database). These parameters are used like variables that pass from page to page and are updated throughout your project. This is to allow for you to be able to make such as choose your own adventure stories with variables that you update throughout the reader’s progress of the story (which can make it more like a game than a book, since the reader can have a customizable character that changes depending on choices made). The parameters require JavaScript to function, but the data is stored in the URL (rather than in a cookie or some such). Example parameters might be such as these:
+
+name: Shule, points=50
+
+If you wanted to update the points, you could use JavaScript operators after a bar character:
+
+points|+=5
+
+Of course, you could do the same thing manually with JavaScript, but this is a quick way to do it. In that last example, make sure you’ve already created the points variable before attempting to perform operations on it. Reassigning it and creating it are the same, however. You can also delete variables (use such as points|del for that). If you need to do something more complicated, you can just omit the update parameters, and use get_params() in scripts.js to get all the parameters in a dictionary. You can then manipulate them according to your desires with JavaScript. Then, you can convert them back to a parameter string with dict_to_params() and put that string in the appropriate place in the update_params() function called by your secondary node link.
+
+--------------
+
+There are abbreviations and/or aliases for most commands (e.g. '&a' is the same as '&attribute'; '&pr' is the same as '&pin regex', '&c' and '&mc' are the same as '&make contexts', '&n' and '&node' are the same as '&make nodes'; node that there are more aliases for each of those and others than I mentioned).
+
+Node IDs are constant by default (meaning, they never change). You may, however, optionally make it so deleted node IDs are recycled and made available for new nodes (although this may cause issues I’ve I’m not careful in programming; so, I may disable this feature). The reason for keeping them constant is to ensure that each article has a permanent and unchanging ID, which may be useful if you want to create a list of tomato varieties wherein their ID numbers never change (so you can rely on using that number off-site to refer to that tomato variety in order to disambiguate between varieties of the same or similar names); in this case, you probably wouldn’t want to recycle node IDs, since those old IDs would have histories, and some vendors or websites might be using them, still.
+
+--------------
+
+How to start a project:
+
+There are three kinds of projects.
+1. Regular (wikiweb.wikiweb.Project); this is a bare bones version
+2. Includes print and data entry methods, but is otherwise like the regular version (wikiweb.dp_wikiweb.DPProject)
+3. Includes the features of DPProject and methods to export to HTML, but is otherwise like plain old Project (wikiweb.wikiweb_with_exports.ExpProject)
+
+Example using type #1 (note that I'm including keyword names where I don't have to, in order to clarify what's happening):
+
+----
+
+import wikiweb.wikiweb as wikiweb
+
+#Create a project
+pro=wikiweb.Project(dirpath="/home/myHomeFolder/Desktop/database_test", name="Garden1", default_context="includes", default_cross="is a")
+
+#Record the conventions for how you're going to name nodes or whatever. This is optional, of course.
+pro.a["conventions"]="""
+
+This is a case-sensitive database. Regular nouns are not capitalized. So, the ‘tomato’ node would be lowercase (not ‘Tomato’), and the ‘Yellow Doll F1 watermelon’ node would have the casing I indicate (note that ‘watermelon’ is not a proper noun even when it follows a proper noun that is a watermelon).
+
+When you make a node, if it’s a plant breed or such, add the kind of plant it is after it (e.g. ‘Aunt Molly's ground cherry’, and not ‘Aunt Molly's’; ‘Cape Gooseberry ground cherry’ and not ‘Cape Gooseberry’—certainly not ‘Cape gooseberry’ as it’s not a gooseberry, but rather part of the name that should not be separated by making it lowercase).
+""".strip();
+
+#Do something with your Project:
+
+#Make some contexts
+pro.make_context(name="pests", cross="pesters") #Make a context pair. You don't have to specify all these keywords (I'm just doing that so you know what they are).
+pro.make_contexts(("inhabits", "inhabitants"), ("breeds", "breed of"), ("employs", "employed by")) #Make more than one context pair.
+
+#Make some nodes
+pro.make_node(name="tomato") #Make a single node
+pro.make_nodes("fruit", "apple", "pear", "quince", "pepper", "person", "dog", "Pomeranian", "German Shepherd", "Cherokee Purple", "Early Girl F1", "Roma", "Dinner Plate", "F1 hybrid", "country", "Australia", "place", "Japan", "China", "Asia") #Make multiple nodes
+
+#Make some relations:
+pro.make_relation(node_name="dog", context_name="breeds", "Pomeranian", "German Shepherd")
+pro.make_relation("tomato", "breeds", "Cherokee Purple", "Early Girl F1", "Roma", "Dinner Plate")
+pro.make_relation("place", "includes", "country")
+pro.make_relation("country", "includes", "Australia", "Japan", "China")
+
+#Check relations:
+dog_includes_German_Shepherd=pro.is_related(primary_node="dog", context_name="breeds", secondary_node="German Shepherd")
+tomatopro.node_has_relation(node_name="tomato", context_name="breeds")
+
+#Save the project
+pro.save() #You only need to do this if you actually want to save it. Loading saved data is automatic when you create your project.
+
+----
+
+Example of how to use a DPProject:
+
+import wikiweb.dp_wikiweb
+
+#Make the multi-line string for the data entry. You may want to include this in a separate Python file (you can import it by doing `from myFile import *`). I'm including some sample commands (how to do those and much more were outlined previously in this documentation file).
+mstring="""
+&make context
+
+children|parents|default
+breeds|breed of
+includes|is
+
+&make nodes
+
+Cucurbitaceae|cucurbit
+Solanaceae|nightshade
+Poaceae|Gramineae|grass
+Rosaceae|rose family
+Lamiaceae|mint family
+
+cucurbit
+
+cucumber
+gherkin
+gourd
+melon
+squash
+
+gourd
+
+edible gourd
+
+melon
+
+kiwano|African Horned Cucumber|African Horned Melon
+muskmelon
+watermelon
+wax melon
+Asian melon
+
+""".strip()
+
+#We just made some contexts, nodes, and relations. So cucurbit's children are cucumber, gherkin, gourd, melon, and squash (yes, the nodes were created automatically; so, you technically don't always have to use `&make nodes`. When I did make nodes, I made alias names for them, too.
+
+#Create a project
+pro=wikiweb.dp_wikiweb.DPProject(dirpath="/home/myHomeFolder/Desktop/database_test", name="Garden2", default_context="includes", default_cross="is a")
+pro.data_entry(mstring); #Parse and execute commands from the entered data.
+pro.save() #Save the project. Note that you probably don't want to execute the same mstring data twice if you save it (since those commands were already performed previously). Loading saved data is automatic when you create your project.
+
+#Note that a DPProject can do the same stuff a regular Project can do, too, or instead, if desired.
+
+----
+
+Example of how to use an ExpProject:
+3. Includes the features of DPProject and methods to export to HTML, but is otherwise like plain old Project (wikiweb.wikiweb_with_exports.ExpProject)
+
+import wikiweb.wikiweb_with_exports
+
+mstring="""
+&make context
+
+includes|is|default
+
+&make nodes
+
+fruit
+tomato
+watermelon
+pepper
+
+fruit
+
+tomato
+watermelon
+pepper
+""".strip() #Just some sample data entry.
+
+#Create a project
+pro=wikiweb.wikiweb_with_exports.ExpProject(dirpath="/home/myHomeFolder/Desktop/database_test", name="Garden3", default_context="includes", default_cross="is a")
+pro.data_entry(mstring); #Parse and execute commands from the entered data.
+pro.save() #Save the project. Note that you probably don't want to execute the same mstring data twice if you save it and want to run it again (since those commands were already performed previously). Loading saved data is automatic when you create your project.
+pro.html_export(make_index=True) #This makes an HTML representation of your database in a directory within the one specified with the dirpath argument of your project (i.e. `/home/myHomeFolder/Desktop/database_test`, in this case).
+
+#Note that a ExpProject can do the same stuff a DPProject or a regular (bare-bones) Project can do, too, or instead, if desired.
