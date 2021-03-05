@@ -132,7 +132,7 @@ Idaho
 This allows us to provide a lot of information about anything in particular without actually writing up a big, fancy article (although you could still do that in the description, or some other attribute of a node). You can go to a node and see lots of pertinent information just right there in front of your eyes. Or, you can query the project for the information you desire.
 
 
-You may export your project to a web page.
+You may export your project to a web page. I've been explaining things as if you intended to do that (for explanation’s sake), but that's not the primary intention of this software.
 
 
 How to format mstring in Project.data_entry()—mstring is the data you enter in the fashion that you enter it:
