@@ -12,4 +12,4 @@ Dependencies:
 * bcrypt (sudo pip3 install bcrypt)
 * (optional) dill (sudo apt-get install python3-dill); to use dill instead of pickle, you'll need to edit the import section of wikiweb.py
 
-wikiweb is not affiliated with any other projects known by the same name, nor was it inspired by them.
+wikiweb is not affiliated with any other projects known by the same name, nor was it inspired by them. I'm still working on a license, but I aim for it to be free-software or similar (I'll probably release it under multiple licenses, and you can take your pick from those). If you need a license before I decide on one, feel free to contact me about it at my website. This software does not come with any guarantees or warantees. Use it at your own risk.
