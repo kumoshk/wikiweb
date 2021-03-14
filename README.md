@@ -11,3 +11,5 @@ Dependencies:
 * natsort (sudo pip3 install natsort)
 * bcrypt (sudo pip3 install bcrypt)
 * (optional) dill (sudo apt-get install python3-dill); to use dill instead of pickle, you'll need to edit the import section of wikiweb.py
+
+wikiweb is not affiliated with any other projects known by the same name, nor was it inspired by them.
