@@ -3,7 +3,7 @@ A wikiweb is used to make database projects with nodes related through contexts 
 
 See documentation.txt for information on wikiweb and how to use it.
 
-To discuss this project, you may do so at `http://wikiweb.growspice.com`.
+To discuss this project, you may do so at `http://radishrain.321.s1.nabble.com/wikiweb-td3473.html`.
 (Yes, you first have to register, and then become a member by posting in the Support forum that you agree to the rules. You can expect to wait at least a few minutes to 48 hours before your membership is approved.)
 
 Dependencies:
